@@ -1,0 +1,54 @@
+[project]
+name = "waveport"
+version = "0.1.0"
+description = "A Python library to load files produced by TICRA Tools"
+readme = "README.md"
+authors = [{ name = "Maurizio Tomasi", email = "maurizio.tomasi@unimi.it" }]
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.4.6",
+]
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE.txt"]
+keywords = [
+  "TICRA GRASP",
+  "antenna",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Scientific/Engineering :: Astronomy",
+  "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.urls]
+Homepage = "https://github.com/ziotom78/waveport"
+Repository = "https://github.com/ziotom78/waveport"
+Issues = "https://github.com/ziotom78/waveport/issues"
+
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+build-dir = "build/{wheel_tag}"
+
+[tool.uv]
+cache-keys = [
+  { file = "pyproject.toml" },
+  { file = "src/**/*.{h,c,hpp,cpp}" },
+  { file = "CMakeLists.txt" },
+]
+
+[build-system]
+requires = ["scikit-build-core>=0.12", "nanobind"]
+build-backend = "scikit_build_core.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]

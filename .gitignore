@@ -1,0 +1,13 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Nanobind stubs
+src/waveport/*.pyi
+
+# Virtual environments
+.venv

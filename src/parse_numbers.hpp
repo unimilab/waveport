@@ -1,16 +1,20 @@
 /* -*- encoding: utf-8 -*-
  *
- * ***                              ***********
- * ****                            ***************
- *  ***                           ****          ***
- *   ***                          ****       ******
- *    ***                        **               **
- *    ****        ******        ***            ****
- *     ****      *********     ***  ***************
- *      ****    ***********    ***  *************
- *       *********      *********   ****
- *       ********        ********   ***
- *         ***             ****     ***
+ * ***           **             **************
+ * ****          ***         ********************
+ *  ***         ****         ********      ******
+ *  ***         ****        *****             ****
+ *  ***         *****       ***                  **
+ *   ***       ******       **                ** **
+ *   ***       ******      **             *********
+ *    **       **  **      **          ************
+ *    ***     **   ***     *         *************
+ *     **     **    **    **    *****************
+ *     ***   ***    ***   **   *****************
+ *      *******     *******    *************
+ *      ******       ******    ***
+ *       *****        ****     ***
+ *        ***          ***     ***
  *
  * WavePort — A Python library for reading TICRA Tools files
  *
@@ -40,6 +44,11 @@ public:
 /// numbers from a line of text and returns them as a tuple. It throws
 /// a \a ParseError exception if any error occurs while parsing the
 /// line.
+///
+/// This function is handy when you know at compile time how many
+/// numbers you have to read and their type. It is *not* suitable
+/// when the number of elements in the line is determined at runtime:
+/// in that case, use \ref TextCursor::parse_numeric_line.
 ///
 /// \param line The line to parse
 /// \return A tuple containing the parsed numbers

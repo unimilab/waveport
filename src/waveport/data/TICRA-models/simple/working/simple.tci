@@ -1,0 +1,20 @@
+COMMAND OBJECT single_po get_currents ( source : sequence(ref(single_feed)),  &
+auto_convergence_of_po : on, convergence_on_output_grid :  &
+sequence(ref(polar_spherical_cut))) single_po_cmd 
+COMMAND OBJECT polar_spherical_cut get_field ( source :  &
+sequence(ref(single_po), ref(single_feed))) single_get_field_cmd 
+COMMAND OBJECT conical_spherical_cut get_field ( source :  &
+sequence(ref(single_po), ref(single_feed))) 
+COMMAND OBJECT radial_planar_cut get_field ( source : sequence(ref(single_po),  &
+ref(single_feed))) 
+COMMAND OBJECT circular_planar_cut get_field ( source :  &
+sequence(ref(single_po), ref(single_feed))) 
+COMMAND OBJECT radial_surface_cut get_field ( source : sequence(ref(single_po),  &
+ref(single_feed))) 
+COMMAND OBJECT circular_surface_cut get_field ( source :  &
+sequence(ref(single_po), ref(single_feed))) 
+COMMAND OBJECT axial_cylindrical_cut get_field ( source :  &
+sequence(ref(single_po), ref(single_feed))) 
+COMMAND OBJECT circular_cylindrical_cut get_field ( source :  &
+sequence(ref(single_po), ref(single_feed))) 
+QUIT 
