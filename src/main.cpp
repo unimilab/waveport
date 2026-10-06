@@ -80,12 +80,17 @@ NB_MODULE(_core, m) {
   cut_class.def_prop_ro("geometry", &Cut::geometry)
       .def_prop_ro("mode", &Cut::mode)
       .def_prop_ro("type", &Cut::type)
+      .def_prop_ro("init_value", &Cut::init_value)
+      .def_prop_ro("increment", &Cut::increment)
+      .def_prop_ro("constant_angle", &Cut::constant_angle)
+      .def_prop_ro("num_of_values_in_cut", &Cut::num_of_values_in_cut)
+      .def_prop_ro("component_count", &Cut::component_count)
       .def_prop_ro(
           "coefficients",
           [](const Cut &cut) {
             return CoefficientArray{
                 cut.coefficients_data(),
-                {cut.sample_count(), cut.component_count()}};
+                {cut.num_of_values_in_cut(), cut.component_count()}};
           },
           nb::rv_policy::reference_internal);
 

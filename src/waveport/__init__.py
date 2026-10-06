@@ -1,16 +1,20 @@
 # -*- encoding: utf-8 -*-
 #
-# ***                              ***********
-# ****                            ***************
-#  ***                           ****          ***
-#   ***                          ****       ******
-#    ***                        **               **
-#    ****        ******        ***            ****
-#     ****      *********     ***  ***************
-#      ****    ***********    ***  *************
-#       *********      *********   ****
-#       ********        ********   ***
-#         ***             ****     ***
+# ***           **             **************
+# ****          ***         ********************
+#  ***         ****         ********      ******
+#  ***         ****        *****             ****
+#  ***         *****       ***                  **
+#   ***       ******       **                ** **
+#   ***       ******      **             *********
+#    **       **  **      **          ************
+#    ***     **   ***     *         *************
+#     **     **    **    **    *****************
+#     ***   ***    ***   **   *****************
+#      *******     *******    *************
+#      ******       ******    ***
+#       *****        ****     ***
+#        ***          ***     ***
 #
 # WavePort — A Python library for reading TICRA Tools files
 #
@@ -19,28 +23,41 @@
 #
 # Copyright © 2026 Maurizio Tomasi
 
-from importlib.resources import files
-from importlib.resources.abc import Traversable
+import numpy as np
 
-import waveport._core as wpcore
+from waveport._core import (
+    Cut,
+    CutGeometry,
+    CutMode,
+    CutType,
+    ParseError,
+    loads_cut,
+)
 
-from waveport._core import CutGeometry, CutMode, CutType
+from .example_files import (
+    example_data_path,
+)
 
+################################################################################
+# Cut
 
-def example_data_path(*parts: str) -> Traversable:
-    """Return the path to a file or directory in the bundled example data
+def _angles(self: Cut):
+    """Return a NumPy array containing the list of angles that vary in the cut"""
+    
+    return self.init_value + np.arange(self.num_of_values_in_cut) * self.increment
 
-    The package ships the output of a few TICRA Tools models, which
-    are handy for tutorials and tests. Pass the components of the
-    path relative to the data directory, e.g.::
+Cut.angles = _angles
 
-        example_data_path("TICRA-models", "simple", "working", "polar_spherical.cut")
+################################################################################
 
-    Call ``example_data_path()`` without arguments to get the data
-    directory itself.
-    """
-    return files(__package__).joinpath("data", *parts)
-
-
-def read_cut() -> str:
-    return wpcore.loads_cut("")
+__all__ = [
+    # waveport._core
+    "Cut",
+    "CutGeometry",
+    "CutMode",
+    "CutType",
+    "ParseError",
+    "loads_cut",
+    # example_files.py
+    "example_data_path",
+]

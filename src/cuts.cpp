@@ -56,14 +56,17 @@ void Cut::parse_cut_file(TextCursor &cursor) {
                     icut, cursor.line_number() - 1));
   }
 
-  _sample_count = static_cast<std::size_t>(v_num);
+  _init_value = v_ini;
+  _increment = v_inc;
+  _constant_angle = constant;
+  _num_of_values_in_cut = static_cast<std::size_t>(v_num);
   _component_count = static_cast<std::size_t>(ncomp);
 
-  _coefficients.resize(_sample_count * _component_count);
+  _coefficients.resize(_num_of_values_in_cut * _component_count);
   std::span<std::complex<double>> coefficients{_coefficients};
 
   try {
-    for (std::size_t i{}; i < _sample_count; ++i) {
+    for (std::size_t i{}; i < _num_of_values_in_cut; ++i) {
       cursor.read_numeric_line(
           coefficients.subspan(i * _component_count, _component_count));
     }

@@ -23,8 +23,14 @@ import pytest
 
 import numpy as np
 
-from waveport import example_data_path, read_cut
-from waveport._core import CutGeometry, CutMode, CutType, ParseError, loads_cut
+from waveport import (
+    CutGeometry,
+    CutMode,
+    CutType,
+    ParseError,
+    example_data_path,
+    loads_cut,
+)
 
 CUT_DIR = example_data_path("TICRA-models", "simple", "working")
 
@@ -35,48 +41,56 @@ CUT_FILES = {
         CutMode.FIXED_AZIMUTH,
         CutType.POLAR_SPHERICAL,
         8,
+        7.1570178,
     ),
     "conical_spherical.cut": (
         CutGeometry.SPHERICAL,
         CutMode.VARYING_AZIMUTH,
         CutType.CONICAL_SPHERICAL,
         6,
+        30.0,
     ),
     "radial_planar.cut": (
         CutGeometry.PLANAR,
         CutMode.FIXED_AZIMUTH,
         CutType.RADIAL_PLANAR,
         8,
+        5.0,
     ),
     "circular_planar.cut": (
         CutGeometry.PLANAR,
         CutMode.VARYING_AZIMUTH,
         CutType.CIRCULAR_PLANAR,
         6,
+        120.0,
     ),
     "radial_surface.cut": (
         CutGeometry.SURFACE,
         CutMode.FIXED_AZIMUTH,
         CutType.RADIAL_SURFACE,
         8,
+        5.0,
     ),
     "circular_surface.cut": (
         CutGeometry.SURFACE,
         CutMode.VARYING_AZIMUTH,
         CutType.CIRCULAR_SURFACE,
         6,
+        120.0,
     ),
     "axial_cylindrical.cut": (
         CutGeometry.CYLINDRICAL,
         CutMode.FIXED_AZIMUTH,
         CutType.AXIAL_CYLINDRICAL,
         8,
+        5.0,
     ),
     "circular_cylindrical.cut": (
         CutGeometry.CYLINDRICAL,
         CutMode.VARYING_AZIMUTH,
         CutType.CIRCULAR_CYLINDRICAL,
         6,
+        120.0,
     ),
 }
 
@@ -94,14 +108,9 @@ def replace_icut(contents: str, new_icut: str) -> str:
     return "".join(lines)
 
 
-def test_basic_load():
-    cuts = read_cut()
-    print(cuts)
-
-
 @pytest.mark.parametrize("file_name", sorted(CUT_FILES))
 def test_icut_parsing(file_name):
-    geometry, mode, cut_type, num_of_cuts = CUT_FILES[file_name]
+    geometry, mode, cut_type, num_of_cuts, increment = CUT_FILES[file_name]
 
     cuts = loads_cut(read_cut_file(file_name), geometry)
 
@@ -110,6 +119,7 @@ def test_icut_parsing(file_name):
         assert cut.geometry == geometry
         assert cut.mode == mode
         assert cut.type == cut_type
+        np.testing.assert_allclose(cut.increment, increment)
 
 
 def test_coefficients():
@@ -368,3 +378,10 @@ def test_truncated_field_data():
     # Keep the title, the header, and only one of the three field lines
     with pytest.raises(ParseError, match="Unexpected empty content"):
         loads_cut("".join(lines[:3]))
+
+
+def test_angles():
+    cuts = loads_cut(read_cut_file("circular_planar.cut"), CutGeometry.PLANAR)
+
+    np.testing.assert_allclose([cuts[0].init_value, cuts[0].increment], [0.0, 120.0])
+    np.testing.assert_allclose(cuts[0].angles(), np.array([0.0, 120.0, 240.0, 360.0]))

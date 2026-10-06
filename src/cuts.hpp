@@ -106,8 +106,23 @@ public:
   }
 
   [[nodiscard]]
-  std::size_t sample_count() const noexcept {
-    return _sample_count;
+  double init_value() const noexcept {
+    return _init_value;
+  }
+
+  [[nodiscard]]
+  double increment() const noexcept {
+    return _increment;
+  }
+
+  [[nodiscard]]
+  std::size_t constant_angle() const noexcept {
+    return _constant_angle;
+  }
+
+  [[nodiscard]]
+  std::size_t num_of_values_in_cut() const noexcept {
+    return _num_of_values_in_cut;
   }
 
   [[nodiscard]]
@@ -129,7 +144,10 @@ public:
 private:
   std::optional<CutGeometry> _geometry;
   CutMode _mode{};
-  std::size_t _sample_count{};
+  double _init_value{};
+  double _increment{};
+  double _constant_angle{};
+  std::size_t _num_of_values_in_cut{};
   std::size_t _component_count{};
   std::vector<Coefficient> _coefficients;
 
