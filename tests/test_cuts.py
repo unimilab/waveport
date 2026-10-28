@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # ***                              ***********
 # ****                            ***************
@@ -19,9 +18,8 @@
 #
 # Copyright © 2026 Maurizio Tomasi
 
-import pytest
-
 import numpy as np
+import pytest
 
 from waveport import (
     CutGeometry,
@@ -32,60 +30,60 @@ from waveport import (
     loads_cut,
 )
 
-CUT_DIR = example_data_path("TICRA-models", "simple", "working")
+CUT_DIR = example_data_path()
 
 # File name → (geometry, expected ICUT mode, expected cut type, number of cuts)
 CUT_FILES = {
-    "polar_spherical.cut": (
+    "spherical_polar.cut": (
         CutGeometry.SPHERICAL,
         CutMode.FIXED_AZIMUTH,
         CutType.POLAR_SPHERICAL,
         8,
         7.1570178,
     ),
-    "conical_spherical.cut": (
+    "spherical_conical.cut": (
         CutGeometry.SPHERICAL,
         CutMode.VARYING_AZIMUTH,
         CutType.CONICAL_SPHERICAL,
         6,
         30.0,
     ),
-    "radial_planar.cut": (
+    "planar_radial.cut": (
         CutGeometry.PLANAR,
         CutMode.FIXED_AZIMUTH,
         CutType.RADIAL_PLANAR,
         8,
         5.0,
     ),
-    "circular_planar.cut": (
+    "planar_circular.cut": (
         CutGeometry.PLANAR,
         CutMode.VARYING_AZIMUTH,
         CutType.CIRCULAR_PLANAR,
         6,
         120.0,
     ),
-    "radial_surface.cut": (
+    "surface_radial.cut": (
         CutGeometry.SURFACE,
         CutMode.FIXED_AZIMUTH,
         CutType.RADIAL_SURFACE,
         8,
         5.0,
     ),
-    "circular_surface.cut": (
+    "surface_circular.cut": (
         CutGeometry.SURFACE,
         CutMode.VARYING_AZIMUTH,
         CutType.CIRCULAR_SURFACE,
         6,
         120.0,
     ),
-    "axial_cylindrical.cut": (
+    "cylindrical_axial.cut": (
         CutGeometry.CYLINDRICAL,
         CutMode.FIXED_AZIMUTH,
         CutType.AXIAL_CYLINDRICAL,
         8,
         5.0,
     ),
-    "circular_cylindrical.cut": (
+    "cylindrical_circular.cut": (
         CutGeometry.CYLINDRICAL,
         CutMode.VARYING_AZIMUTH,
         CutType.CIRCULAR_CYLINDRICAL,
@@ -123,7 +121,7 @@ def test_icut_parsing(file_name):
 
 
 def test_coefficients():
-    cuts = loads_cut(read_cut_file("radial_planar.cut"), CutGeometry.PLANAR)
+    cuts = loads_cut(read_cut_file("planar_radial.cut"), CutGeometry.PLANAR)
 
     assert len(cuts) == 8
 
@@ -321,7 +319,7 @@ def test_coefficients():
 
 
 def test_icut_parsing_without_geometry():
-    cuts = loads_cut(read_cut_file("polar_spherical.cut"))
+    cuts = loads_cut(read_cut_file("spherical_polar.cut"))
 
     for cut in cuts:
         assert cut.geometry is None
@@ -330,7 +328,7 @@ def test_icut_parsing_without_geometry():
 
 
 def test_repr():
-    cuts = loads_cut(read_cut_file("circular_planar.cut"), CutGeometry.PLANAR)
+    cuts = loads_cut(read_cut_file("planar_circular.cut"), CutGeometry.PLANAR)
 
     assert (
         repr(cuts[0])
@@ -344,14 +342,14 @@ def test_parse_error_is_value_error():
 
 @pytest.mark.parametrize("icut", ["0", "3", "-1"])
 def test_invalid_icut(icut):
-    contents = replace_icut(read_cut_file("polar_spherical.cut"), icut)
+    contents = replace_icut(read_cut_file("spherical_polar.cut"), icut)
 
     with pytest.raises(ParseError, match=f"Invalid value {icut} for ICUT"):
         loads_cut(contents)
 
 
 def test_non_numeric_icut():
-    contents = replace_icut(read_cut_file("polar_spherical.cut"), "X")
+    contents = replace_icut(read_cut_file("spherical_polar.cut"), "X")
 
     with pytest.raises(ParseError, match="invalid number"):
         loads_cut(contents)
@@ -373,7 +371,7 @@ def test_header_with_extra_fields():
 
 
 def test_truncated_field_data():
-    lines = read_cut_file("polar_spherical.cut").splitlines(keepends=True)
+    lines = read_cut_file("spherical_polar.cut").splitlines(keepends=True)
 
     # Keep the title, the header, and only one of the three field lines
     with pytest.raises(ParseError, match="Unexpected empty content"):
@@ -381,7 +379,7 @@ def test_truncated_field_data():
 
 
 def test_angles():
-    cuts = loads_cut(read_cut_file("circular_planar.cut"), CutGeometry.PLANAR)
+    cuts = loads_cut(read_cut_file("planar_circular.cut"), CutGeometry.PLANAR)
 
     np.testing.assert_allclose([cuts[0].init_value, cuts[0].increment], [0.0, 120.0])
     np.testing.assert_allclose(cuts[0].angles(), np.array([0.0, 120.0, 240.0, 360.0]))

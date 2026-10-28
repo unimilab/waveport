@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # ***           **             **************
 # ****          ***         ********************
@@ -25,6 +24,7 @@
 
 from importlib.resources import files
 from importlib.resources.abc import Traversable
+
 
 def example_data_path(*parts: str) -> Traversable:
     """Return the path to a file or directory in the bundled example data

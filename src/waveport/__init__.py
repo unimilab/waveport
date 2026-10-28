@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 #
 # ***           **             **************
 # ****          ***         ********************
@@ -41,10 +40,12 @@ from .example_files import (
 ################################################################################
 # Cut
 
+
 def _angles(self: Cut):
     """Return a NumPy array containing the list of angles that vary in the cut"""
-    
+
     return self.init_value + np.arange(self.num_of_values_in_cut) * self.increment
+
 
 Cut.angles = _angles
 
