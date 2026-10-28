@@ -38,4 +38,4 @@ def example_data_path(*parts: str) -> Traversable:
     Call ``example_data_path()`` without arguments to get the data
     directory itself.
     """
-    return files(__package__).joinpath("data", *parts)
+    return files("waveport").joinpath("data", *parts)

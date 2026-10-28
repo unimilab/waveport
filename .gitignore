@@ -6,8 +6,5 @@ dist/
 wheels/
 *.egg-info
 
-# Nanobind stubs
-src/waveport/*.pyi
-
 # Virtual environments
 .venv

@@ -8,15 +8,6 @@ nanobind_add_module(_core
   src/cuts.cpp
   src/text_cursor.cpp
 )
-nanobind_add_stub(
-  _core_stub
-  MODULE _core
-  OUTPUT _core.pyi
-  PYTHON_PATH $<TARGET_FILE_DIR:_core>
-  DEPENDS _core
-)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/_core.pyi
-        DESTINATION ${SKBUILD_PROJECT_NAME})
 target_compile_features(_core PRIVATE cxx_std_20)
 
 include(cmake/CPM.cmake)
