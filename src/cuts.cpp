@@ -59,6 +59,7 @@ void Cut::parse_cut_file(TextCursor &cursor) {
   _init_value = v_ini;
   _increment = v_inc;
   _constant_angle = constant;
+  _component_type = static_cast<ComponentType>(icomp);
   _num_of_values_in_cut = static_cast<std::size_t>(v_num);
   _component_count = static_cast<std::size_t>(ncomp);
 

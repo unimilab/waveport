@@ -27,6 +27,7 @@
 #ifndef __CUTS_HPP__
 #define __CUTS_HPP__
 
+#include "component_type.hpp"
 #include "text_cursor.hpp"
 
 #include <complex>
@@ -80,6 +81,11 @@ public:
   }
 
   [[nodiscard]]
+  ComponentType component_type() const noexcept {
+    return _component_type;
+  }
+
+  [[nodiscard]]
   std::optional<CutType> type() const noexcept {
     if (!_geometry)
       return std::nullopt;
@@ -125,6 +131,10 @@ public:
     return _num_of_values_in_cut;
   }
 
+  /** \brief Number of components of each sample of the electric field
+   *
+   * It can either be 2 (far field) or 3 (near field).
+   */
   [[nodiscard]]
   std::size_t component_count() const noexcept {
     return _component_count;
@@ -144,11 +154,12 @@ public:
 private:
   std::optional<CutGeometry> _geometry;
   CutMode _mode{};
+  ComponentType _component_type{};
   double _init_value{};
   double _increment{};
   double _constant_angle{};
   std::size_t _num_of_values_in_cut{};
-  std::size_t _component_count{};
+  std::size_t _component_count{}; // Either 2 (far field) or 3 (near field)
   std::vector<Coefficient> _coefficients;
 
   void parse_cut_file(TextCursor &cursor);
