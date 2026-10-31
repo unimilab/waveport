@@ -6,6 +6,7 @@ find_package(nanobind CONFIG REQUIRED)
 nanobind_add_module(_core
   src/main.cpp
   src/cuts.cpp
+  src/grids.cpp
   src/text_cursor.cpp
 )
 target_compile_features(_core PRIVATE cxx_std_20)

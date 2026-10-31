@@ -28,7 +28,9 @@
 #include <format>
 
 #include "cuts.hpp"
+#include "grids.hpp"
 #include "parse_numbers.hpp"
+
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
 #include <nanobind/stl/optional.h>
@@ -37,6 +39,9 @@
 #include <nanobind/stl/vector.h>
 
 namespace nb = nanobind;
+
+////////////////////////////////////////////////////////////
+// Cuts
 
 CutList loads_cut(std::string_view contents,
                   std::optional<CutGeometry> geometry = std::nullopt) {
@@ -49,11 +54,39 @@ CutList loads_cut(std::string_view contents,
   return cuts;
 }
 
+////////////////////////////////////////////////////////////
+// Grids
+
+GridList loads_grid(std::string_view contents,
+                    std::optional<GridGeometry> geometry = std::nullopt) {
+  TextCursor cursor{contents};
+  return Grid::parse_grid_file(cursor, geometry);
+}
+
+////////////////////////////////////////////////////////////
+// Main
+
 using CoefficientArray = nb::ndarray<nb::numpy, const std::complex<double>,
                                      nb::ndim<2>, nb::c_contig>;
 
 NB_MODULE(_core, m) {
   nb::exception<ParseError>(m, "ParseError", PyExc_ValueError);
+
+  nb::enum_<ComponentType>(m, "ComponentType")
+      .value("LINEAR_THETA_PHI", ComponentType::LinearThetaPhi)
+      .value("CIRCULAR", ComponentType::Circular)
+      .value("CO_CROSS", ComponentType::CoCross)
+      .value("LINEAR_ALONG_POL_ELLIPSE", ComponentType::LinearAlongPolEllipse)
+      .value("XPD_THETA_PHI", ComponentType::XPDThetaPhi)
+      .value("XPD_CIRCULAR", ComponentType::XPDCircular)
+      .value("XPD_CO_CROSS", ComponentType::XPDCoCross)
+      .value("XPD_POL_ELLIPSE", ComponentType::XPDPolEllipse)
+      .value("TOTAL_POWER_AND_CIRCULAR_RATIO",
+             ComponentType::TotalPowerAndCircularRatio)
+      .value("POYNTING_VECTOR", ComponentType::PoyntingVector);
+
+  //////////////////////////////////////////////////
+  // Cuts
 
   nb::enum_<CutGeometry>(m, "CutGeometry")
       .value("SPHERICAL", CutGeometry::Spherical)
@@ -95,13 +128,61 @@ NB_MODULE(_core, m) {
           nb::rv_policy::reference_internal);
 
   cut_class.def("__repr__", [](const Cut &cut) {
-    // Converting to Python objects gives "CutGeometry.SPHERICAL",
-    // "None", etc., consistent with the names exposed above
     return std::format("Cut(geometry={}, mode={})",
                        nb::str(nb::cast(cut.geometry())).c_str(),
                        nb::str(nb::cast(cut.mode())).c_str());
   });
 
   m.def("loads_cut", loads_cut, nb::arg("contents"),
+        nb::arg("geometry") = nb::none());
+
+  //////////////////////////////////////////////////
+  // Grids
+
+  nb::enum_<GridGeometry>(m, "GridGeometry")
+      .value("SPHERICAL", GridGeometry::Spherical)
+      .value("PLANAR", GridGeometry::Planar)
+      .value("SURFACE", GridGeometry::Surface)
+      .value("CYLINDRICAL", GridGeometry::Cylindrical);
+
+  nb::enum_<GridType>(m, "GridType")
+      .value("UV", GridType::UV)
+      .value("RHO_PHI", GridType::RhoPhi)
+      .value("XY", GridType::XY)
+      .value("ELEVATION_OVER_AZIMUTH", GridType::ElevationOverAzimuth)
+      .value("ELEVATION_AND_AZIMUTH", GridType::ElevationAndAzimuth)
+      .value("AZIMUTH_OVER_ELEVATION", GridType::AzimuthOverElevation)
+      .value("THETA_PHI", GridType::ThetaPhi)
+      .value("PHI_Z", GridType::PhiZ)
+      .value("AZIMUTH_OVER_ELEVATION_EDX", GridType::AzimuthOverElevationEDX)
+      .value("ELEVATION_OVER_AZIMUTH_EDX", GridType::ElevationOverAzimuthEDX);
+
+  auto grid_class{nb::class_<Grid>(m, "Grid")};
+
+  grid_class.def_prop_ro("geometry", &Grid::geometry)
+      .def_prop_ro("frequency_hz", &Grid::frequency_hz)
+      .def_prop_ro("x_vector", &Grid::x_vector)
+      .def_prop_ro("y_vector", &Grid::y_vector)
+      .def_prop_ro("grid_type", &Grid::grid_type)
+      .def_prop_ro("num_of_values_along_x", &Grid::num_of_values_along_x)
+      .def_prop_ro("num_of_values_along_y", &Grid::num_of_values_along_y)
+      .def_prop_ro("component_type", &Grid::component_type)
+      .def_prop_ro("component_count", &Grid::component_count)
+      .def_prop_ro(
+          "coefficients",
+          [](const Grid &grid) {
+            return CoefficientArray{grid.coefficients_data(),
+                                    {grid.num_of_values_along_x(),
+                                     grid.num_of_values_along_y(),
+                                     grid.component_count()}};
+          },
+          nb::rv_policy::reference_internal);
+
+  grid_class.def("__repr__", [](const Grid &grid) {
+    return std::format("Grid(geometry={})",
+                       nb::str(nb::cast(grid.geometry())).c_str());
+  });
+
+  m.def("loads_grid", loads_grid, nb::arg("contents"),
         nb::arg("geometry") = nb::none());
 }
