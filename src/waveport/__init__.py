@@ -25,16 +25,16 @@
 import numpy as np
 
 from waveport._core import (
-    ParseError,
     ComponentType,
     Cut,
     CutGeometry,
     CutMode,
     CutType,
-    loads_cut,
     Grid,
     GridGeometry,
     GridType,
+    ParseError,
+    loads_cut,
     loads_grid,
 )
 
