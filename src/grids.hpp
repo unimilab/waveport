@@ -123,21 +123,6 @@ public:
   }
 
   [[nodiscard]]
-  size_t num_of_values_in_grid() const noexcept {
-    return _num_of_x * _num_of_y;
-  }
-
-  [[nodiscard]]
-  size_t num_of_values_along_x() const noexcept {
-    return _num_of_x;
-  }
-
-  [[nodiscard]]
-  size_t num_of_values_along_y() const noexcept {
-    return _num_of_y;
-  }
-
-  [[nodiscard]]
   const Coefficient &coefficient(std::size_t sample,
                                  std::size_t component) const {
     return _coefficients.at(sample * _component_count + component);
@@ -158,6 +143,16 @@ private:
   double _start_y, _end_y;
   size_t _num_of_x, _num_of_y;
   std::vector<Coefficient> _coefficients;
+
+  static void
+  read_implicit_coefficients(TextCursor &cursor, Grid &cur_grid,
+                             std::span<std::complex<double>> &coefficients,
+                             size_t nx, size_t ny, GridList &result);
+
+  static void
+  read_explicit_coefficients(TextCursor &cursor, Grid &cur_grid,
+                             std::span<std::complex<double>> &coefficients,
+                             size_t nx, size_t ny, GridList &result);
 
   [[nodiscard]]
   static std::vector<double> get_vector_of_points(double start, double end,
