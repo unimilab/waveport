@@ -223,8 +223,6 @@ void Grid::read_explicit_coefficients(
     cursor.read_numeric_line(coefficients.subspan(i * cur_grid._component_count,
                                                   cur_grid._component_count));
   }
-
-  result.emplace_back(cur_grid);
 }
 
 GridList Grid::parse_grid_file(TextCursor &cursor,
@@ -290,7 +288,11 @@ GridList Grid::parse_grid_file(TextCursor &cursor,
   // The following is repeated NSET times (one per frequency)
   for (size_t cur_set{}; cur_set < nset; ++cur_set) {
     Grid cur_grid{geometry};
-    cur_grid._frequency_hz = frequencies_hz.at(cur_set);
+    if (!frequencies_hz.empty()) {
+      if (cur_set < frequencies_hz.size())
+        cur_grid._frequency_hz = frequencies_hz.at(cur_set);
+    }
+
     cur_grid._component_type = static_cast<ComponentType>(icomp);
     cur_grid._component_count = static_cast<std::size_t>(ncomp);
     cur_grid._grid_type = static_cast<GridType>(igrid);

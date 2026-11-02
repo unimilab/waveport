@@ -89,6 +89,16 @@ public:
   }
 
   [[nodiscard]]
+  size_t num_of_values_along_x() const noexcept {
+    return _num_of_x;
+  }
+
+  [[nodiscard]]
+  size_t num_of_values_along_y() const noexcept {
+    return _num_of_y;
+  }
+
+  [[nodiscard]]
   std::vector<double> x_vector() const noexcept {
     return get_vector_of_points(_start_x, _end_x, _num_of_x, _center_x);
   }

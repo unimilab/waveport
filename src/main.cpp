@@ -172,8 +172,8 @@ NB_MODULE(_core, m) {
           "coefficients",
           [](const Grid &grid) {
             return CoefficientArray{grid.coefficients_data(),
-                                    {grid.num_of_values_along_x(),
-                                     grid.num_of_values_along_y(),
+                                    {grid.num_of_values_along_y(),
+                                     grid.num_of_values_along_x(),
                                      grid.component_count()}};
           },
           nb::rv_policy::reference_internal);
