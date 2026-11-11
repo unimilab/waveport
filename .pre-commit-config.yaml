@@ -1,0 +1,24 @@
+default_install_hook_types: [pre-commit]
+default_stages: [pre-commit]
+
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: Check formatting
+        entry: uv run --frozen ruff format --check .
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: ruff-check
+        name: Lint Python code
+        entry: uv run --frozen ruff check .
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: ty-check
+        name: Check Python types
+        entry: uv run --frozen ty check .
+        language: system
+        pass_filenames: false
+        always_run: true
