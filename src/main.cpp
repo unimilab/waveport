@@ -24,15 +24,16 @@
  * Copyright © 2026 Maurizio Tomasi
  */
 
-#include "fast_float/fast_float.h"
 #include <format>
 
 #include "cuts.hpp"
 #include "grids.hpp"
 #include "parse_numbers.hpp"
+#include "swe.hpp"
 
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
+#include <nanobind/stl/complex.h>
 #include <nanobind/stl/optional.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
@@ -61,6 +62,14 @@ GridList loads_grid(std::string_view contents,
                     std::optional<GridGeometry> geometry = std::nullopt) {
   TextCursor cursor{contents};
   return Grid::parse_grid_file(cursor, geometry);
+}
+
+////////////////////////////////////////////////////////////
+// SWEs
+
+SweList loads_swe(std::string_view contents) {
+  TextCursor cursor{contents};
+  return Swe::parse_swe_file(cursor);
 }
 
 ////////////////////////////////////////////////////////////
@@ -185,4 +194,27 @@ NB_MODULE(_core, m) {
 
   m.def("loads_grid", loads_grid, nb::arg("contents"),
         nb::arg("geometry") = nb::none());
+
+  //////////////////////////////////////////////////
+  // SWEs
+
+  auto swe_class{nb::class_<Swe>(m, "Swe")};
+
+  swe_class.def_prop_ro("frequency_hz", &Swe::frequency_hz)
+      .def_prop_ro("num_of_theta", &Swe::num_of_theta)
+      .def_prop_ro("num_of_phi", &Swe::num_of_phi)
+      .def_prop_ro("n_max", &Swe::n_max)
+      .def_prop_ro("m_max", &Swe::m_max)
+      .def_prop_ro("cum_power_w", &Swe::cum_power_w);
+
+  swe_class.def("are_indexes_valid", &Swe::are_indexes_valid, nb::arg("s"),
+                nb::arg("m"), nb::arg("n"));
+  swe_class.def("coefficient", &Swe::coefficient, nb::arg("s"), nb::arg("m"),
+                nb::arg("n"));
+
+  swe_class.def("__repr__", [](const Swe &swe) {
+    return std::format("Swe(mmax={}, nmax={})", swe.m_max(), swe.n_max());
+  });
+
+  m.def("loads_swe", loads_swe, nb::arg("contents"));
 }

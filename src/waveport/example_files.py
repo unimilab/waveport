@@ -23,10 +23,10 @@
 # Copyright © 2026 Maurizio Tomasi
 
 from importlib.resources import files
-from importlib.resources.abc import Traversable
+from pathlib import Path
 
 
-def example_data_path(*parts: str) -> Traversable:
+def example_data_path(*parts: str) -> Path:
     """Return the path to a file or directory in the bundled example data
 
     The package ships the output of a few TICRA Tools models, which
@@ -38,4 +38,7 @@ def example_data_path(*parts: str) -> Traversable:
     Call ``example_data_path()`` without arguments to get the data
     directory itself.
     """
-    return files("waveport").joinpath("data", *parts)
+    resource = files("waveport").joinpath("data", *parts)
+    if not isinstance(resource, Path):
+        raise TypeError("Example data must be installed on the filesystem")
+    return resource

@@ -27,6 +27,8 @@
 #ifndef __PARSE_NUMBERS_HPP__
 #define __PARSE_NUMBERS_HPP__
 
+#include "fast_float/fast_float.h"
+
 #include <format>
 #include <stdexcept>
 #include <string_view>

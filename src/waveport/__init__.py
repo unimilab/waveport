@@ -22,8 +22,6 @@
 #
 # Copyright © 2026 Maurizio Tomasi
 
-import numpy as np
-
 from waveport._core import (
     ComponentType,
     Cut,
@@ -34,25 +32,24 @@ from waveport._core import (
     GridGeometry,
     GridType,
     ParseError,
+    Swe,
     loads_cut,
     loads_grid,
+    loads_swe,
 )
 
+from .cuts import (
+    load_cut,
+)
 from .example_files import (
     example_data_path,
 )
-
-################################################################################
-# Cut
-
-
-def _angles(self: Cut) -> np.ndarray:
-    """Return a NumPy array containing the list of angles that vary in the cut"""
-
-    return self.init_value + np.arange(self.num_of_values_in_cut) * self.increment
-
-
-Cut.angles = _angles
+from .grids import (
+    load_grid,
+)
+from .swe import (
+    load_swe,
+)
 
 ################################################################################
 
@@ -68,7 +65,15 @@ __all__ = [
     "Grid",
     "GridGeometry",
     "GridType",
+    "Swe",
     "loads_grid",
+    "loads_swe",
     # example_files.py
     "example_data_path",
+    # cuts.py
+    "load_cut",
+    # grids.py
+    "load_grid",
+    # swe.py
+    "load_swe",
 ]
