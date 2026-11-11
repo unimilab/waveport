@@ -28,9 +28,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ziotom78/waveport"
-Repository = "https://github.com/ziotom78/waveport"
-Issues = "https://github.com/ziotom78/waveport/issues"
+Homepage = "https://github.com/unimilab/waveport"
+Documentation = "https://unimilab.github.io/waveport/"
+Repository = "https://github.com/unimilab/waveport"
+Issues = "https://github.com/unimilab/waveport/issues"
 
 [tool.scikit-build]
 minimum-version = "build-system.requires"
@@ -51,4 +52,8 @@ build-backend = "scikit_build_core.build"
 dev = [
     "pytest>=9.1.1",
     "ruff>=0.16.10",
+    "ty>=0.0.95",
+]
+docs = [
+    "sphinx>=8.2,<10",
 ]
