@@ -22,11 +22,11 @@ Status of the implementation:
 ## Documentation
 
 The Sphinx documentation lives in [`docs/`](docs/index.rst) and is published at
-<https://ziotom78.github.io/waveport/> once GitHub Pages is enabled.
+<https://unimilab.github.io/waveport/> once GitHub Pages is enabled.
 Build it locally from the repository root:
 
 ```sh
-uv sync --locked --only-group docs
+uv sync --locked --group docs
 uv run --no-sync sphinx-build -M html docs docs/_build -W --keep-going
 ```
 

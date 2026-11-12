@@ -11,7 +11,7 @@ For a checkout of this repository:
 
 .. code-block:: console
 
-   git clone https://github.com/ziotom78/waveport.git
+   git clone https://github.com/unimilab/waveport.git
    cd waveport
    uv sync
 

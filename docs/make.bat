@@ -1,7 +1,7 @@
 @ECHO OFF
 pushd %~dp0
 if "%SPHINXBUILD%" == "" set SPHINXBUILD=uv run --no-sync sphinx-build
-if "%SPHINXOPTS%" == "" set SPHINXOPTS=-W --keep-going
+if "%SPHINXOPTS%" == "" set SPHINXOPTS=-W --keep-going -E
 if "%1" == "" goto help
 %SPHINXBUILD% -M %1 . _build %SPHINXOPTS% %O%
 goto end

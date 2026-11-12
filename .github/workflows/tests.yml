@@ -12,10 +12,12 @@ jobs:
   pytest:
     name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    # Python 3.15 is still a pre-release: report its failures without failing the workflow
+    continue-on-error: ${{ matrix.python-version == '3.15' }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
     steps:
       - uses: actions/checkout@v6
@@ -23,9 +25,9 @@ jobs:
           persist-credentials: false
 
       - name: Set up uv and Python
-        uses: astral-sh/setup-uv@v1
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          version: "latest"
+          version: "0.13.6"
           python-version: ${{ matrix.python-version }}
           enable-cache: true
 

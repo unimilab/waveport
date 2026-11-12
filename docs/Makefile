@@ -1,5 +1,7 @@
 # Minimal Sphinx makefile. Install the docs dependency group before running make.
-SPHINXOPTS ?= -W --keep-going
+# -E rebuilds the environment from scratch: autodoc cannot track changes to
+# docstrings defined in the compiled extension (src/main.cpp).
+SPHINXOPTS ?= -W --keep-going -E
 SPHINXBUILD ?= uv run --no-sync sphinx-build
 SOURCEDIR = .
 BUILDDIR = _build

@@ -143,7 +143,18 @@ NB_MODULE(_core, m) {
   });
 
   m.def("loads_cut", loads_cut, nb::arg("contents"),
-        nb::arg("geometry") = nb::none());
+        nb::arg("geometry") = nb::none(),
+        R"doc(Parse a string containing the contents of a TICRA cut file
+
+This function accepts a text string that contains the contents of a
+TICRA cut file. It should be used whenever a file is not physically
+present on a storage device but was received by any other means, e.g.,
+through a socket or as the output of a decompression program.
+
+Note that you can use :func:`.load_cut` if the file you want to load
+was compressed using GZip or BZip2, as the function handles the
+decompression automatically.
+)doc");
 
   //////////////////////////////////////////////////
   // Grids
@@ -193,7 +204,18 @@ NB_MODULE(_core, m) {
   });
 
   m.def("loads_grid", loads_grid, nb::arg("contents"),
-        nb::arg("geometry") = nb::none());
+        nb::arg("geometry") = nb::none(),
+        R"doc(Parse a string containing the contents of a TICRA grid file
+
+This function accepts a text string that contains the contents of a
+TICRA grid file. It should be used whenever a file is not physically
+present on a storage device but was received by any other means, e.g.,
+through a socket or as the output of a decompression program.
+
+Note that you can use :func:`.load_grid` if the file you want to load
+was compressed using GZip or BZip2, as the function handles the
+decompression automatically.
+)doc");
 
   //////////////////////////////////////////////////
   // SWEs
@@ -207,14 +229,38 @@ NB_MODULE(_core, m) {
       .def_prop_ro("m_max", &Swe::m_max)
       .def_prop_ro("cum_power_w", &Swe::cum_power_w);
 
-  swe_class.def("are_indexes_valid", &Swe::are_indexes_valid, nb::arg("s"),
-                nb::arg("m"), nb::arg("n"));
+  swe_class.def(
+      "are_indexes_valid", &Swe::are_indexes_valid, nb::arg("s"), nb::arg("m"),
+      nb::arg("n"),
+      R"doc(Determine if :math:`(s, m, n)` is a valid set of coefficients
+
+The coefficients `s` (either 0 or 1), `m`, and `n` are used to
+identify the :math:`Q_{smn}` coefficient by :meth:`.Swe.coefficient`.
+Not all combinations of coefficients are valid: if they are not,
+:meth:`.Swe.coefficient` returns zero. This function can be used to
+determine if a zero is because the coefficient does not exist or is
+actually zero.
+)doc");
   swe_class.def("coefficient", &Swe::coefficient, nb::arg("s"), nb::arg("m"),
-                nb::arg("n"));
+                nb::arg("n"),
+                R"doc(Return one :math:`Q_{smn}` coefficient given its index.
+
+)doc");
 
   swe_class.def("__repr__", [](const Swe &swe) {
     return std::format("Swe(mmax={}, nmax={})", swe.m_max(), swe.n_max());
   });
 
-  m.def("loads_swe", loads_swe, nb::arg("contents"));
+  m.def("loads_swe", loads_swe, nb::arg("contents"),
+        R"doc(Parse a string containing the contents of a TICRA ``.sph`` file
+
+This function accepts a text string that contains the contents of a
+TICRA ``.sph`` file. It should be used whenever a file is not physically
+present on a storage device but was received by any other means, e.g.,
+through a socket or as the output of a decompression program.
+
+Note that you can use :func:`.load_swe` if the file you want to load
+was compressed using GZip or BZip2, as the function handles the
+decompression automatically.
+)doc");
 }

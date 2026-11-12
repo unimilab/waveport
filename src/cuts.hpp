@@ -122,7 +122,7 @@ public:
   }
 
   [[nodiscard]]
-  std::size_t constant_angle() const noexcept {
+  double constant_angle() const noexcept {
     return _constant_angle;
   }
 

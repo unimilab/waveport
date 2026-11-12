@@ -25,8 +25,8 @@ jobs:
           python-version: "3.13"
           enable-cache: true
 
-      - name: Install documentation dependencies
-        run: uv sync --locked --only-group docs
+      - name: Build the package and install documentation dependencies
+        run: uv sync --locked --no-dev --group docs
 
       - name: Build HTML with warnings treated as errors
         run: uv run --no-sync sphinx-build -M html docs docs/_build -W --keep-going

@@ -32,19 +32,21 @@ from typing import IO, Any
 # Common stuff
 
 
-def _load_text_file(f: IO, handler: Callable[[str], Any]) -> Any:
+def _load_text_file(f: IO, handler: Callable[[str], Any], *args, **kwargs) -> Any:
     contents = "".join(f.readlines())
-    return handler(contents)
+    return handler(contents, *args, **kwargs)
 
 
-def load_text_file_path(path: str | Path, handler: Callable[[str], Any]) -> Any:
+def load_text_file_path(
+    path: str | Path, handler: Callable[[str], Any], *args, **kwargs
+) -> Any:
     path = Path(path)
     if path.suffix.lower() == ".gz":
         with gzip.open(path, "rt") as inpf:
-            return _load_text_file(inpf, handler)
+            return _load_text_file(inpf, handler, *args, **kwargs)
     elif path.suffix.lower() == ".bz2":
         with bz2.open(path, "rt") as inpf:
-            return _load_text_file(inpf, handler)
+            return _load_text_file(inpf, handler, *args, **kwargs)
     else:
         with open(path, "rt") as inpf:
-            return _load_text_file(inpf, handler)
+            return _load_text_file(inpf, handler, *args, **kwargs)

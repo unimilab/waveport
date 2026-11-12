@@ -4,17 +4,22 @@ Contributing to the documentation
 Build locally
 -------------
 
-From the repository root, install the locked documentation dependencies:
+From the repository root, build WavePort and install the locked documentation
+dependencies:
 
 .. code-block:: console
 
-   uv sync --locked --only-group docs
-   uv run --no-sync sphinx-build -M html docs docs/_build -W --keep-going
+   uv sync --locked --group docs
+   uv run --no-sync sphinx-build -M html docs docs/_build -W --keep-going -E
 
-Open ``docs/_build/html/index.html`` in a browser. ``--only-group docs``
-installs the documentation tools without building WavePort's native extension.
-For an environment that also needs the package and development tools, use
-``uv sync --locked --group docs`` instead.
+Open ``docs/_build/html/index.html`` in a browser. The package, including its
+native extension, must be importable because the API reference pages in
+``docs/reference/`` extract the docstrings with ``sphinx.ext.autodoc``. When you
+add a class or function to the public API, list it with an ``autoclass`` or
+``autofunction`` directive in the appropriate page. The ``-E`` flag makes
+Sphinx re-read every page: without it, docstrings defined in ``src/main.cpp``
+are not refreshed after rebuilding the extension, because Sphinx cannot track
+changes in compiled modules.
 
 Convenience commands after installing the tools:
 
@@ -66,7 +71,7 @@ To enable publishing for this repository:
    workflow manually on the default branch.
 
 The deployment uploads ``docs/_build/html`` using the official Pages actions
-and publishes it at https://ziotom78.github.io/waveport/. The workflow uses
+and publishes it at https://unimilab.github.io/waveport/. The workflow uses
 ``GITHUB_TOKEN`` with deployment permissions scoped to the deployment job;
 no personal access token or ``gh-pages`` branch is needed. Sphinx generates
 ``.nojekyll`` so GitHub Pages serves Sphinx's underscored asset directories.
