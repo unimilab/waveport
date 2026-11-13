@@ -29,6 +29,8 @@ import numpy as np
 from waveport._core import (
     Cut,
     CutGeometry,
+    CutMode,
+    CutType,
     loads_cut,
 )
 
@@ -36,7 +38,15 @@ from .common import load_text_file_path
 
 
 def _angles(self: Cut) -> np.ndarray:
-    """Return a NumPy array containing the list of angles that vary in the cut"""
+    """Return a NumPy array containing the list of angles that vary in the cut.
+
+    The angle that varies can either be ϑ (polar angle) or φ
+    (azimuthal angle). To decide what is the case, refer to
+    :attr:`.Cut.mode`.
+
+    Angles are expressed in degrees.
+
+    """
 
     return self.init_value + np.arange(self.num_of_values_in_cut) * self.increment
 
@@ -68,11 +78,32 @@ def load_cut(path: str | Path, geometry: CutGeometry | None = None) -> list[Cut]
 ############################################################
 # Docstrings
 
-CutGeometry.__doc__ = """The geometry used in a TICRA cut file
+CutGeometry.__doc__ = R"""The geometry used in a TICRA cut file
 
 This type is used to record the kind of geometry used in a TICRA cut
 file.
 """
+
+
+CutMode.__doc__ = R"""Which angle in the cut is varying
+
+This type is used to indicate whether the cut was computed along the ϑ
+(polar) or φ (azimuthal) angle.
+
+- ``FIXED_AZIMUTH``: the constant angle is φ (azimuth angle), while ϑ
+  varies
+
+- ``VARYING_AZIMUTH``: the constant angle is ϑ (polar angle), while φ
+  varies
+"""
+
+
+CutType.__doc__ = R"""Type of cut
+
+This type is used to indicate the coordinates used to extract the cut. Refer to the TICRA User’s manual to get the proper definition of each coordinate system.
+
+"""
+
 
 Cut.__doc__ = """The contents of a TICRA Cut file
 
@@ -118,4 +149,42 @@ The actual angle is determined by the value in :attr:`.Cut.mode`:
   varies
 
 The angle is expressed in degrees.
+"""
+
+Cut.coefficients.__doc__ = R"""The coefficients of the cut
+
+This is a NumPy array of rank 2 with shape ``(n_points,
+n_components)``, where ``n_points`` is the number of points along the
+cut and ``n_components`` is either 2 or 3, depending whether it is a
+near field or far field simulation.
+
+The value of ``n_points`` is the same as
+:attr:`.Cut.num_of_values_in_cut`, while `n_components` is the same as
+:attr:`.Cut.component_count`.
+
+"""
+
+
+Cut.increment.__doc__ = R"""Angle between two consecutive samples
+
+Angle (in degrees) between two consecutive samples in
+:attr:`.Cut.coefficients`. This is the increment used in the field
+:attr:`.Cut.angles`.
+
+"""
+
+
+Cut.init_value.__doc__ = R"""First angle in the cut
+
+Angle (in degrees) of the first sample in :attr:`.Cut.coefficients`.
+This is the value of the first element in the array
+:attr:`.Cut.angles`.
+
+"""
+
+
+Cut.num_of_values_in_cut.__doc__ = R"""Number of angles sampled by the cut
+
+This is the number of elements in the array :attr:`.Cut.angles`.
+
 """

@@ -49,9 +49,11 @@ smaller pages as the documentation grows.
 
 Use Sphinx roles such as ``:doc:`` for pages and ``:func:`` for API objects,
 and specify a language on code blocks. Version and author metadata come from
-``pyproject.toml``. The API reference uses Python-domain directives rather
-than imports; update it alongside API changes. Code examples are rendered
-but are not executed by the documentation build.
+``pyproject.toml``. The API reference imports ``waveport`` and extracts the
+docstrings with autodoc, so write the documentation of each object in its
+docstring (in ``src/main.cpp`` for objects defined by the extension), and list
+new objects in the reference pages alongside API changes. Code examples are
+rendered but are not executed by the documentation build.
 
 Publish to GitHub Pages
 -----------------------
