@@ -227,7 +227,8 @@ decompression automatically.
       .def_prop_ro("num_of_phi", &Swe::num_of_phi)
       .def_prop_ro("n_max", &Swe::n_max)
       .def_prop_ro("m_max", &Swe::m_max)
-      .def_prop_ro("cum_power_w", &Swe::cum_power_w);
+      .def_prop_ro("cum_power_w", &Swe::cum_power_w)
+      .def_prop_ro("num_of_coefficients", &Swe::num_of_coefficients);
 
   swe_class.def(
       "are_indexes_valid", &Swe::are_indexes_valid, nb::arg("s"), nb::arg("m"),

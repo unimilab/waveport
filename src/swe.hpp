@@ -73,6 +73,14 @@ public:
     return result;
   }
 
+  [[nodiscard]]
+  size_t num_of_coefficients() const noexcept {
+    /* See the comment in the implementation of `Swe::index` to
+     * understand how coefficients are laid in memory within
+     * `_coefficients`. */
+    return 2 * (_n_max * (_n_max + 1) + _m_max);
+  }
+
   [[nodiscard]] size_t num_of_theta() const noexcept { return _n_theta; }
   [[nodiscard]] size_t num_of_phi() const noexcept { return _n_phi; }
   [[nodiscard]] size_t n_max() const noexcept { return _n_max; }
@@ -93,13 +101,9 @@ private:
   size_t _m_max;
   double _cum_power_w;
 
-  /* Conceptually, `_coefficients` is a 3D tensor with shape
-   *
-   *     (2, nmax, 2 * mmax + 1)
-   *
-   * but we model it as a 1D vector, where the fastest rank is the
-   * latest (rightmost).
-   */
+  /* See the comment in the implementation of `Swe::index` to
+   * understand how coefficients are laid in memory within
+   * `_coefficients`. */
   std::vector<Coefficient> _coefficients;
 
   [[nodiscard]]
@@ -109,35 +113,46 @@ private:
     assert(abs(m) <= n);
     assert(abs(m) <= _m_max);
 
-    /* To understand the (apparently) weird formula, remember that the
-     * shape of `_coefficients` is (2, nmax, 2 * mmax + 1).
+    /* The memory layout follows an idea explained in Hansen’s book and
+     * illustrated in Fig. 2.3, which is reproduced here:
      *
-     * Assume first that s=1 and n=1; then the first two terms in the
-     * polynomial are null and the formula is simply a linear
-     * operation on m:
+     *      ^ m
+     *      |                  j=30
+     *    3 +                      o
+     *      |                    29
+     *      |
+     *      |            16      28
+     *    2 +              o       o
+     *      |            15      27
+     *      |
+     *      |      6      14      26
+     *    1 +       o       o       o
+     *      |      5      13      25
+     *      |
+     *      |      4      12      24
+     *    0 +-------o-------o-------o-------+--->
+     *      |      3      11      23      n=4
+     *      |
+     *      |      2      10      22
+     *   −1 +       o       o       o
+     *      |    j=1       9      21
+     *      |
+     *      |             8      20
+     *   −2 +              o       o
+     *      |             7      19
+     *      |
+     *      |                    18
+     *   −3 +                      o
+     *      |                    17
      *
-     *     index = m + mmax
-     *
-     * which, as m ∈ [-mmax, mmax], gives a number in the range
-     *
-     *     0 ≤ index ≤ 2 * mmax
-     *
-     * Suppose now to increment `n` by one, so that n=2. In this case,
-     * we have moved to the next row, which means that the first row
-     * was already “filled”. The formula becomes
-     *
-     *     index = (2 * mmax + 1) + (m + mmax)
-     *
-     * where the first term skips the elements of the first row and
-     * the second term applies to the second row only. Iterate this
-     * for all the other values of n and nearly all the formula makes
-     * sense! The `s` term can be analyzed in a similar way, but
-     * instead of “filling” one row at a time, we are filling a
-     * rectangle, hence the multiplication of two dimensions.
+     * Each "o" point represents *two* coefficients: the one with s=1
+     * and the one with s=2. The `j` index varies linearly from 1 to
+     * 30 in the figure, touching all the coefficients.
      */
-    size_t dim1{2 * _m_max + 1};
-    size_t dim2{_n_max};
-    return (s - 1) * (dim1 * dim2) + dim1 * (n - 1) + (m + _m_max);
+
+    // Hansen does not put the `- 1` at the end because he assumes
+    // 1-based indexing (Fortran’s convention)
+    return 2 * (n * (n + 1) + m - 1) + s - 1;
   }
 
   static std::optional<double> parse_frequency(std::string_view line);
