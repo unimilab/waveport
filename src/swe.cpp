@@ -121,7 +121,7 @@ SweList Swe::parse_swe_file(TextCursor &cursor) {
       (void)expect_line(cursor);
     }
 
-    cur_swe._coefficients.resize(2 * nmax * (2 * mmax + 1));
+    cur_swe._coefficients.resize(cur_swe.num_of_coefficients());
 
     // Read the coefficients
     cur_swe._cum_power_w = 0.0;
