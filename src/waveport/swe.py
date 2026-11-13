@@ -105,3 +105,10 @@ Swe.m_max.__doc__ = r"""Maximum value for the azimuthal index :math:`\left|m\rig
 The number must be between 1 and :attr:`.Swe.num_of_theta`/2
 
 """
+
+Swe.num_of_coefficients.__doc__ = """Number of coefficients stored in memory
+
+This represents the *actual* number of complex coefficients
+:math:`Q_{smn}` stored in memory by the :class:`.Swe` object.
+
+"""
